@@ -4,6 +4,7 @@ import hashtags_top
 import statistiques_globales
 import comparateur_crises
 import suivi_detaille_crises
+import gravite
 
 # Configuration de la page
 st.set_page_config(
@@ -73,7 +74,8 @@ page = st.sidebar.radio("Navigation", [
     "Évolution des tweets dans le temps",
     "Top hashtags",
     "Comparateur de crises",
-    "Suivi de crises"
+    "Suivi de crises",
+    "Gravité"
 ])
 
 # Affichage des pages
@@ -89,6 +91,7 @@ if page == "Accueil":
         - Découvrir les hashtags les plus utilisés
         - Comparer des crises entre elles
         - Suivre une crise en particulier
+        - Gravité
         - (À venir) Analyser les utilisateurs, les catégories, la localisation, etc.
         """
     )
@@ -107,6 +110,10 @@ elif page == "Comparateur de crises":
 
 elif page == "Suivi de crises":
     suivi_detaille_crises.afficher_suivi_detaille_crises()
+
+elif page == "Gravité":
+    gravite.afficher_gravite()
+
 
 with st.expander("Informations sur le projet"):
     st.markdown("""
