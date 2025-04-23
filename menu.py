@@ -4,7 +4,10 @@ import hashtags_top
 import statistiques_globales
 import comparateur_crises
 import suivi_detaille_crises
+import carte_globale
 import gravite
+import demande_aide_final
+import top_influenceur
 
 # Configuration de la page
 st.set_page_config(
@@ -75,7 +78,10 @@ page = st.sidebar.radio("Navigation", [
     "Top hashtags",
     "Comparateur de crises",
     "Suivi de crises",
-    "Gravité"
+    "Carte globale des tweets",
+    "Gravité",
+    "Demande d'aide",
+    "Top influenceur"
 ])
 
 # Affichage des pages
@@ -92,6 +98,8 @@ if page == "Accueil":
         - Comparer des crises entre elles
         - Suivre une crise en particulier
         - Gravité
+        - Demande d'aide
+        - Top influenceur
         - (À venir) Analyser les utilisateurs, les catégories, la localisation, etc.
         """
     )
@@ -111,9 +119,17 @@ elif page == "Comparateur de crises":
 elif page == "Suivi de crises":
     suivi_detaille_crises.afficher_suivi_detaille_crises()
 
+elif page == "Carte globale des tweets":
+    carte_globale.afficher_carte_globale()
+
 elif page == "Gravité":
     gravite.afficher_gravite()
 
+elif page == "Demande d'aide":
+    demande_aide_final.demande_aide()
+
+elif page == "Top influenceur":
+    top_influenceur.top_influenceurs()
 
 with st.expander("Informations sur le projet"):
     st.markdown("""
