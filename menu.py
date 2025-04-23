@@ -8,6 +8,8 @@ import carte_globale
 import gravite
 import demande_aide_final
 import top_influenceur
+import base64
+
 
 # Configuration de la page
 st.set_page_config(
@@ -66,6 +68,35 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+
+
+def add_bg_from_local(image_file):
+    with open(image_file, "rb") as image:
+        encoded = base64.b64encode(image.read()).decode()
+    st.markdown(
+        f"""
+        <style>
+        html, body, .stApp {{
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }}
+
+        .stApp {{
+            background-image: url("data:image/png;base64,{encoded}");
+            background-size: 100% 100%;   /* force largeur ET hauteur */
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center center;
+            background-color: rgba(255, 255, 255, 0.2); /* Couleur de fond blanche avec 50% de transparence */
+            background-blend-mode: lighten; /* Mélange l'image avec la couleur de fond */
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+# Appelle la fonction avec le nom de ton image :
+add_bg_from_local("BG.png")  # ou .png
 
 # Titre dans la sidebar
 st.sidebar.title("📚 Menu principal")
