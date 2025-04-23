@@ -1,10 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import locale
-
-# Pour afficher les nombres en français
-locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 def afficher_tweet_temps():
     st.title("📈 Évolution des tweets dans le temps")

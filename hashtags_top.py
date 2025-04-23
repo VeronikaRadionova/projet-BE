@@ -1,10 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import locale
-
-# Pour le formatage français
-locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 def afficher_hashtag_ids_top():
     st.title("🏷️ Hashtag les plus utilisés")
