@@ -50,7 +50,7 @@ def top_influenceurs():
     total_influenceurs = engagement['user_id'].nunique()
     best_user = engagement.sort_values(by='engagement_score', ascending=False).iloc[0]
     st.metric(label="Nombre total d'influenceurs (toutes crises)", value=total_influenceurs)
-    st.metric(label="Meilleur influenceur", value=f"{best_user['screen_name']} ({int(best_user['engagement_score'])} points)")
+    st.metric(label="Top influenceur sur les crises", value=f"{best_user['screen_name']} ({int(best_user['engagement_score'])} points)")
 
     # --- Menu latéral ---
     st.sidebar.title(" Filtres")
