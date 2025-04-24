@@ -10,7 +10,8 @@ import demande_aide_final
 import top_influenceur
 import recherche_personnalisee
 import base64
-
+import os
+import pandas as pd
 
 # Configuration de la page
 st.set_page_config(
@@ -99,6 +100,17 @@ def add_bg_from_local(image_file):
 # Appelle la fonction avec le nom de ton image :
 #add_bg_from_local("BG.png")  # ou .png
 
+# """
+# # Importation du data dans le repertoire CSV
+# csv_path = "../CSV"
+# dataframes = {} # Dictionnaire pour stocker les DataFrames
+# for file_name in os.listdir(csv_path):
+#     if file_name.endswith('.csv'):
+#         file_path = os.path.join(csv_path, file_name)
+#         df_name = os.path.splitext(file_name)[0]  # Nom du fichier sans l'extension sera le nom de chaque df
+#         dataframes[df_name] = pd.read_csv(file_path)
+# """
+
 # Titre dans la sidebar
 st.sidebar.title("📚 Menu principal")
 
@@ -167,6 +179,41 @@ elif page == "Demande d'aide":
 
 elif page == "Top influenceur":
     top_influenceur.top_influenceurs()
+
+# """ PROPOSITION DE CHANGEMENT: chaque fonction devra accepter en entree le dictionnaire de dataframes 
+#     au lieu d'importer les données directement dans chaque fonction. Cela rendra le code plus modulaire et
+#     évitera les imports répétés.
+    
+# elif page == "Vue d’ensemble":
+#     statistiques_globales.afficher_statistiques_globales(dataframes)
+
+# elif page == "Recherche personnalisée":
+#     recherche_personnalisee.recherche_personnalisee(dataframes)
+
+# elif page == "Évolution des tweets dans le temps":
+#     tweet_temps.afficher_tweet_temps(dataframes)
+
+# elif page == "Top hashtags":
+#     hashtags_top.afficher_hashtag_ids_top(dataframes)
+
+# elif page == "Comparateur de crises":
+#     comparateur_crises.afficher_comparateur_crises(dataframes)
+
+# elif page == "Suivi de crises":
+#     suivi_detaille_crises.afficher_suivi_detaille_crises(dataframes)
+
+# elif page == "Carte globale des tweets":
+#     carte_globale.afficher_carte_globale(dataframes)
+
+# elif page == "Gravité":
+#     gravite.afficher_gravite(dataframes)
+
+# elif page == "Demande d'aide":
+#     demande_aide_final.demande_aide(dataframes)
+
+# elif page == "Top influenceur":
+#     top_influenceur.top_influenceurs(dataframes)
+# """
 
 with st.expander("Informations sur le projet"):
     st.markdown("""
