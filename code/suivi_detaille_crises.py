@@ -7,7 +7,7 @@ def afficher_suivi_detaille_crises():
 
     # Chargement des données
     try:
-        df = pd.read_csv("Tweet_sentiment_localisation.csv", parse_dates=["created_at"])
+        df = pd.read_csv("../CSV/Tweet_sentiment_localisation.csv", parse_dates=["created_at"])
     except FileNotFoundError:
         st.error("Fichier Tweet_sentiment_localisation.csv introuvable.")
         return

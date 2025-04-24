@@ -7,7 +7,7 @@ def afficher_comparateur_crises():
 
     # Charger les données
     try:
-        df = pd.read_csv("tweet_clean.csv", parse_dates=["created_at"])
+        df = pd.read_csv("../CSV/tweet_clean.csv", parse_dates=["created_at"])
     except FileNotFoundError:
         st.error("Fichier tweet_clean.csv introuvable.")
         return

@@ -241,17 +241,17 @@ def afficher_gravite() :
     st.title('📊 Visualisation du Degré de Gravité des Tweets')
 
     dfs = {
-        "Tous les Tweets": pd.read_csv("Tweet_clean.csv"),
-        "Wildfire": pd.read_csv("tweets_wildfire.csv"),
-        "Bombing": pd.read_csv("tweets_bombing.csv"),
-        "Flood": pd.read_csv("tweets_flood.csv"),
-        "Earthquake": pd.read_csv("tweets_earthquake.csv"),
-        "Shooting": pd.read_csv("tweets_shooting.csv"),
-        "Typhoon": pd.read_csv("tweets_typhoon.csv"),
+        "Tous les Tweets": pd.read_csv("../CSV/Tweet_clean.csv"),
+        "Wildfire": pd.read_csv("../CSV/tweets_wildfire.csv"),
+        "Bombing": pd.read_csv("../CSV/tweets_bombing.csv"),
+        "Flood": pd.read_csv("../CSV/tweets_flood.csv"),
+        "Earthquake": pd.read_csv("../CSV/tweets_earthquake.csv"),
+        "Shooting": pd.read_csv("../CSV/tweets_shooting.csv"),
+        "Typhoon": pd.read_csv("../CSV/tweets_typhoon.csv"),
     }
 
-    df_categories = pd.read_csv("tweets_par_categorie.csv")
-    df_event = pd.read_csv('tweets_par_event.csv')
+    df_categories = pd.read_csv("../CSV/tweets_par_categorie.csv")
+    df_event = pd.read_csv('../CSV/tweets_par_event.csv')
 
     tab1, tab2, tab3, tab4 = st.tabs([
         " Gravité par type d'événement",

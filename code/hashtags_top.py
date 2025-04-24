@@ -6,7 +6,7 @@ def afficher_hashtag_ids_top():
     st.title("🏷️ Hashtag les plus utilisés")
 
     try:
-        df = pd.read_csv("Hashtag_clean.csv")
+        df = pd.read_csv("../CSV/Hashtag_clean.csv")
     except FileNotFoundError:
         st.error("Fichier Hashtag_clean.csv introuvable.")
         return

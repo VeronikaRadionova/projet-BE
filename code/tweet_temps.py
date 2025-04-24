@@ -6,7 +6,7 @@ def afficher_tweet_temps():
     st.title("📈 Évolution des tweets dans le temps")
     
     try:
-        df = pd.read_csv("Tweet_date_clean.csv")
+        df = pd.read_csv("../CSV/Tweet_date_clean.csv")
     except FileNotFoundError:
         st.error("Fichier Tweet_date_clean.csv introuvable.")
         return

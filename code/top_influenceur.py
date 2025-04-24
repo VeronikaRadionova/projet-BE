@@ -7,10 +7,10 @@ def top_influenceurs():
     st.title(" Top Influenceurs par Crise (Retweets + Réponses)")
 
     # --- Chargement des fichiers ---
-    tweets = pd.read_csv("Tweet_date_clean.csv")
-    is_about = pd.read_csv("is_about_clean.csv")
-    posted = pd.read_csv("posted_clean.csv")
-    users = pd.read_csv("User_clean.csv")
+    tweets = pd.read_csv("../CSV/Tweet_date_clean.csv")
+    is_about = pd.read_csv("../CSV/is_about_clean.csv")
+    posted = pd.read_csv("../CSV/posted_clean.csv")
+    users = pd.read_csv("../CSV/User_clean.csv")
 
     # --- Normalisation ---
     for df in [tweets, is_about, posted]:

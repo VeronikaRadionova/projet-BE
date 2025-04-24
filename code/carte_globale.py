@@ -8,7 +8,7 @@ def afficher_carte_globale():
     st.title("🗺️ Carte globale des tweets")
 
     try:
-        df = pd.read_csv("Tweet_sentiment_localisation.csv")
+        df = pd.read_csv("../CSV/Tweet_sentiment_localisation.csv")
     except FileNotFoundError:
         st.error("Fichier Tweet_sentiment_localisation.csv introuvable.")
         return

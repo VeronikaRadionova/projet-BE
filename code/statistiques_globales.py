@@ -9,7 +9,7 @@ def afficher_statistiques_globales():
     st.title("📊 Statistiques globales")
 
     try:
-        df = pd.read_csv("Tweet_sentiment_localisation.csv", parse_dates=["created_at"])
+        df = pd.read_csv("../CSV/Tweet_sentiment_localisation.csv", parse_dates=["created_at"])
     except FileNotFoundError:
         st.error("Fichier Tweet_sentiment_localisation.csv introuvable.")
         return

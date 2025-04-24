@@ -8,10 +8,10 @@ def demande_aide():
     st.title(" Analyse des tweets par crise")
 
     # --- Chargement des fichiers ---
-    tweets = pd.read_csv("Tweet_date_clean.csv")
-    is_about = pd.read_csv("is_about_clean.csv")
-    events = pd.read_csv("Event_clean.csv")
-    help_requests = pd.read_csv("help_requests.csv")
+    tweets = pd.read_csv("../CSV/Tweet_date_clean.csv")
+    is_about = pd.read_csv("../CSV/is_about_clean.csv")
+    events = pd.read_csv("../CSV/Event_clean.csv")
+    help_requests = pd.read_csv("../CSV/help_requests.csv")
 
     # --- Normalisation des colonnes clés ---
     tweets['tweet_id'] = tweets['tweet_id'].astype(str)

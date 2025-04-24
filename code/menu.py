@@ -8,6 +8,7 @@ import carte_globale
 import gravite
 import demande_aide_final
 import top_influenceur
+import recherche_personnalisee
 import base64
 
 
@@ -105,6 +106,7 @@ st.sidebar.title("📚 Menu principal")
 page = st.sidebar.radio("Navigation", [
     "Accueil",
     "Vue d’ensemble",
+    "Recherche personnalisée",
     "Évolution des tweets dans le temps",
     "Top hashtags",
     "Comparateur de crises",
@@ -124,6 +126,7 @@ if page == "Accueil":
         
         Utilisez le menu à gauche pour :
         - Voir des statistiques globales sur les tweets
+        - Faire des recherches personnalisees
         - Visualiser l’évolution des tweets dans le temps
         - Découvrir les hashtags les plus utilisés
         - Comparer des crises entre elles
@@ -137,6 +140,9 @@ if page == "Accueil":
 
 elif page == "Vue d’ensemble":
     statistiques_globales.afficher_statistiques_globales()
+
+elif page == "Recherche personnalisée":
+    recherche_personnalisee.recherche_personnalisee()
 
 elif page == "Évolution des tweets dans le temps":
     tweet_temps.afficher_tweet_temps()
