@@ -96,7 +96,7 @@ def add_bg_from_local(image_file):
         unsafe_allow_html=True
     )
 # Appelle la fonction avec le nom de ton image :
-add_bg_from_local("BG.png")  # ou .png
+#add_bg_from_local("BG.png")  # ou .png
 
 # Titre dans la sidebar
 st.sidebar.title("📚 Menu principal")
