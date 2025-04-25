@@ -4,16 +4,16 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 
-def afficher_carte_globale():
+def afficher_carte_globale(dataframes, labels):
     st.title("🗺️ Carte globale des tweets")
 
-    try:
-        df = pd.read_csv("../CSV/Tweet_sentiment_localisation.csv")
-    except FileNotFoundError:
-        st.error("Fichier Tweet_sentiment_localisation.csv introuvable.")
+    if "Tweet_sentiment_localisation" not in dataframes:
+        st.error("Tweet_sentiment_localisation est manquant.")
         return
 
-    required_cols = {"latitude", "longitude", "retweet_count", "sentiment", "text"}
+    df = dataframes["Tweet_sentiment_localisation"]
+
+    required_cols = {"latitude", "longitude", "retweet_count", "sentiment", "text", "topic"}
     if not required_cols.issubset(df.columns):
         st.error("Colonnes nécessaires manquantes dans le fichier.")
         return
@@ -25,7 +25,25 @@ def afficher_carte_globale():
         st.warning("Aucun tweet géolocalisé à afficher.")
         return
 
-    # Slider pour le filtrage
+    # Mapping inverse
+    label_to_code = {v: k for k, v in labels.items()}
+
+    # Liste des crises disponibles (lisibles)
+    crises_codes = df_geo["topic"].dropna().unique()
+    crises_lisibles = [labels.get(code, code) for code in sorted(crises_codes)]
+
+    # Selectbox
+    selected_label = st.selectbox("📌 Filtrer par crise (facultatif)", options=["Toutes"] + crises_lisibles)
+
+    if selected_label != "Toutes":
+        selected_code = label_to_code.get(selected_label, selected_label)
+        df_geo = df_geo[df_geo["topic"] == selected_code]
+
+    if df_geo.empty:
+        st.warning("Aucun tweet trouvé pour cette crise.")
+        return
+
+    # Slider pour filtrer par retweets
     min_retweet, max_retweet = int(df_geo["retweet_count"].min()), int(df_geo["retweet_count"].max())
     seuil_retweet = st.slider("🎚️ Nombre minimal de retweets à afficher :", min_value=min_retweet,
                               max_value=max_retweet, value=min_retweet, step=1)
@@ -41,14 +59,14 @@ def afficher_carte_globale():
     df_geo["latitude_jitter"] = df_geo["latitude"] + np.random.uniform(-0.01, 0.01, size=len(df_geo))
     df_geo["longitude_jitter"] = df_geo["longitude"] + np.random.uniform(-0.01, 0.01, size=len(df_geo))
 
-    # Taille de points
+    # Taille des points en fonction des retweets
     df_geo["taille_point"] = df_geo["retweet_count"].apply(lambda x: max(5, min(x * 0.5, 40)))
 
-    # Vue sélectionnable
+    # Choix de la vue
     vue = st.radio("🗺️ Choisir la vue :", [
         "📍 Carte des tweets (points)",
         "🔥 Heatmap simple (densité brute)",
-        "🔥 Heatmap pondérée (par retweets)" #Pas sûr de celle-là
+        "🔥 Heatmap pondérée (par retweets)"
     ])
 
     if vue == "📍 Carte des tweets (points)":
@@ -96,21 +114,17 @@ def afficher_carte_globale():
         ))
 
     # Layout final
-    if vue.startswith("🔥"):
-        fig.update_layout(
-            mapbox=dict(
-                style="open-street-map",
-                zoom=2,
-                center=dict(
-                    lat=df_geo["latitude"].mean(),
-                    lon=df_geo["longitude"].mean()
-                )
-            ),
-            height=700,
-            margin={"r": 0, "t": 0, "l": 0, "b": 0}
-        )
-    else:
-        fig.update_layout(mapbox_style="open-street-map")
-        fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    fig.update_layout(
+        mapbox=dict(
+            style="open-street-map",
+            zoom=2,
+            center=dict(
+                lat=df_geo["latitude"].mean(),
+                lon=df_geo["longitude"].mean()
+            )
+        ),
+        height=700,
+        margin={"r": 0, "t": 0, "l": 0, "b": 0}
+    )
 
     st.plotly_chart(fig, use_container_width=True)

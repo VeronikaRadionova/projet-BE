@@ -1,4 +1,12 @@
 import streamlit as st
+
+# Configuration de la page
+st.set_page_config(
+    page_title="Tableau de bord des Tweets",
+    page_icon="📊",
+    layout="wide"
+)
+
 import tweet_temps
 import hashtags_top
 import statistiques_globales
@@ -13,12 +21,6 @@ import base64
 import os
 import pandas as pd
 
-# Configuration de la page
-st.set_page_config(
-    page_title="Tableau de bord des Tweets",
-    page_icon="📊",
-    layout="wide"
-)
 
 # Injection de CSS personnalisé via st.markdown
 st.markdown("""
@@ -97,19 +99,56 @@ def add_bg_from_local(image_file):
         """,
         unsafe_allow_html=True
     )
-# Appelle la fonction avec le nom de ton image :
-#add_bg_from_local("BG.png")  # ou .png
 
 # """
-# # Importation du data dans le repertoire CSV
-# csv_path = "../CSV"
-# dataframes = {} # Dictionnaire pour stocker les DataFrames
-# for file_name in os.listdir(csv_path):
-#     if file_name.endswith('.csv'):
-#         file_path = os.path.join(csv_path, file_name)
-#         df_name = os.path.splitext(file_name)[0]  # Nom du fichier sans l'extension sera le nom de chaque df
-#         dataframes[df_name] = pd.read_csv(file_path)
-# """
+# Importation du data dans le repertoire CSV
+csv_path = "../CSV"
+dataframes = {}
+
+for file_name in os.listdir(csv_path):
+    if file_name.endswith('.csv'):
+        file_path = os.path.join(csv_path, file_name)
+        df_name = os.path.splitext(file_name)[0]
+        dataframes[df_name] = pd.read_csv(file_path, low_memory=False)
+
+labels = {
+    "TRECIS-CTIT-H-001": "fireColorado2012",
+    "TRECIS-CTIT-H-002": "costaRicaEarthquake2012",
+    "TRECIS-CTIT-H-003": "floodColorado2013",
+    "TRECIS-CTIT-H-004": "typhoonPablo2012",
+    "TRECIS-CTIT-H-005": "laAirportShooting2013",
+    "TRECIS-CTIT-H-006": "westTexasExplosion2013",
+    "TRECIS-CTIT-H-007": "guatemalaEarthquake2012",
+    "TRECIS-CTIT-H-008": "italyEarthquakes2012",
+    "TRECIS-CTIT-H-009": "philipinnesFloods2012",
+    "TRECIS-CTIT-H-010": "albertaFloods2013",
+    "TRECIS-CTIT-H-011": "australiaBushfire2013",
+    "TRECIS-CTIT-H-012": "bostonBombings2013",
+    "TRECIS-CTIT-H-013": "manilaFloods2013",
+    "TRECIS-CTIT-H-014": "queenslandFloods2013",
+    "TRECIS-CTIT-H-015": "typhoonYolanda2013",
+    "TRECIS-CTIT-H-016": "joplinTornado2011",
+    "TRECIS-CTIT-H-017": "chileEarthquake2014",
+    "TRECIS-CTIT-H-018": "typhoonHagupit2014",
+    "TRECIS-CTIT-H-019": "nepalEarthquake2015",
+    "TRECIS-CTIT-H-020": "flSchoolShooting2018",
+    "TRECIS-CTIT-H-021": "parisAttacks2015",
+    "TRECIS-CTIT-H-022": "floodChoco2019",
+    "TRECIS-CTIT-H-023": "fireAndover2019",
+    "TRECIS-CTIT-H-024": "earthquakeCalifornia2014",
+    "TRECIS-CTIT-H-025": "earthquakeBohol2013",
+    "TRECIS-CTIT-H-026": "hurricaneFlorence2018",
+    "TRECIS-CTIT-H-027": "shootingDallas2017",
+    "TRECIS-CTIT-H-028": "fireYMM2016",
+    "TRECIS-CTIT-H-029": "albertaWildfires2019",
+    "TRECIS-CTIT-H-030": "cycloneKenneth2019",
+    "TRECIS-CTIT-H-031": "philippinesEarthquake2019",
+    "TRECIS-CTIT-H-032": "coloradoStemShooting2019",
+    "TRECIS-CTIT-H-033": "southAfricaFloods2019",
+    "TRECIS-CTIT-H-034": "sandiegoSynagogueShooting2019"
+}
+
+label_to_code = {v: k for k, v in labels.items()}
 
 # Titre dans la sidebar
 st.sidebar.title("📚 Menu principal")
@@ -151,25 +190,25 @@ if page == "Accueil":
     )
 
 elif page == "Vue d’ensemble":
-    statistiques_globales.afficher_statistiques_globales()
+    statistiques_globales.afficher_statistiques_globales(dataframes,labels)
 
 elif page == "Recherche personnalisée":
-    recherche_personnalisee.recherche_personnalisee()
+    recherche_personnalisee.recherche_personnalisee(dataframes,labels)
 
 elif page == "Évolution des tweets dans le temps":
-    tweet_temps.afficher_tweet_temps()
+    tweet_temps.afficher_tweet_temps(dataframes,labels)
 
 elif page == "Top hashtags":
-    hashtags_top.afficher_hashtag_ids_top()
+    hashtags_top.afficher_hashtag_ids_top(dataframes,labels)
 
 elif page == "Comparateur de crises":
-    comparateur_crises.afficher_comparateur_crises()
+    comparateur_crises.afficher_comparateur_crises(dataframes,labels)
 
 elif page == "Suivi de crises":
-    suivi_detaille_crises.afficher_suivi_detaille_crises()
+    suivi_detaille_crises.afficher_suivi_detaille_crises(dataframes,labels)
 
 elif page == "Carte globale des tweets":
-    carte_globale.afficher_carte_globale()
+    carte_globale.afficher_carte_globale(dataframes,labels)
 
 elif page == "Gravité":
     gravite.afficher_gravite()
@@ -179,41 +218,6 @@ elif page == "Demande d'aide":
 
 elif page == "Top influenceur":
     top_influenceur.top_influenceurs()
-
-# """ PROPOSITION DE CHANGEMENT: chaque fonction devra accepter en entree le dictionnaire de dataframes 
-#     au lieu d'importer les données directement dans chaque fonction. Cela rendra le code plus modulaire et
-#     évitera les imports répétés.
-    
-# elif page == "Vue d’ensemble":
-#     statistiques_globales.afficher_statistiques_globales(dataframes)
-
-# elif page == "Recherche personnalisée":
-#     recherche_personnalisee.recherche_personnalisee(dataframes)
-
-# elif page == "Évolution des tweets dans le temps":
-#     tweet_temps.afficher_tweet_temps(dataframes)
-
-# elif page == "Top hashtags":
-#     hashtags_top.afficher_hashtag_ids_top(dataframes)
-
-# elif page == "Comparateur de crises":
-#     comparateur_crises.afficher_comparateur_crises(dataframes)
-
-# elif page == "Suivi de crises":
-#     suivi_detaille_crises.afficher_suivi_detaille_crises(dataframes)
-
-# elif page == "Carte globale des tweets":
-#     carte_globale.afficher_carte_globale(dataframes)
-
-# elif page == "Gravité":
-#     gravite.afficher_gravite(dataframes)
-
-# elif page == "Demande d'aide":
-#     demande_aide_final.demande_aide(dataframes)
-
-# elif page == "Top influenceur":
-#     top_influenceur.top_influenceurs(dataframes)
-# """
 
 with st.expander("Informations sur le projet"):
     st.markdown("""

@@ -2,36 +2,43 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-def afficher_comparateur_crises():
+def afficher_comparateur_crises(dataframes, labels):
     st.title("⚖️ Comparateur de crises – Statistiques globales")
 
-    # Charger les données
-    try:
-        df = pd.read_csv("../CSV/tweet_clean.csv", parse_dates=["created_at"])
-    except FileNotFoundError:
-        st.error("Fichier tweet_clean.csv introuvable.")
+    # Vérification de la présence du fichier nécessaire
+    if "tweet_clean" not in dataframes:
+        st.error("Le fichier 'tweet_clean.csv' est manquant dans le dossier CSV.")
         return
 
-    # Vérification colonnes essentielles
+    df = dataframes["tweet_clean"]
+
+    # Vérification des colonnes essentielles
     required_cols = {"tweet_id", "topic", "retweet_count", "favorite_count"}
     if not required_cols.issubset(df.columns):
-        st.error("Colonnes manquantes dans le fichier.")
+        st.error("Colonnes nécessaires manquantes dans le DataFrame.")
         return
 
-    # Liste des topics
+    # Liste des topics avec noms lisibles
     topics = df["topic"].dropna().unique()
-    selected = st.multiselect(
+    readable_topics = {topic: labels.get(topic, topic) for topic in topics}
+
+    # Affichage du sélecteur
+    selected_labels = st.multiselect(
         "Sélectionne les crises à comparer",
-        options=sorted(topics),
-        default=sorted(topics)[:2]
+        options=[readable_topics[t] for t in sorted(topics)],
+        default=[readable_topics[t] for t in sorted(topics)[:2]]
     )
 
-    if not selected:
+    # Conversion inverse des labels sélectionnés en codes
+    label_to_code = {v: k for k, v in readable_topics.items()}
+    selected_codes = [label_to_code[label] for label in selected_labels if label in label_to_code]
+
+    if not selected_codes:
         st.warning("Choisis au moins une crise.")
         return
 
     # Filtrage
-    df_filtered = df[df["topic"].isin(selected)]
+    df_filtered = df[df["topic"].isin(selected_codes)]
 
     # Calculs
     stats = df_filtered.groupby("topic").agg(
@@ -41,10 +48,10 @@ def afficher_comparateur_crises():
     ).reset_index()
 
     stats["Moyenne_likes"] = stats["Moyenne_likes"].round(2)
+    stats["topic"] = stats["topic"].map(readable_topics)  # Remplacer les codes par noms lisibles
 
     # 🔹 Tableau
     st.subheader("📋 Statistiques comparées")
-    
     st.dataframe(stats, use_container_width=True)
 
     # 🔷 Barres groupées
