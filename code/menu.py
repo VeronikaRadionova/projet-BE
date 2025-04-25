@@ -211,7 +211,7 @@ elif page == "Carte globale des tweets":
     carte_globale.afficher_carte_globale(dataframes,labels)
 
 elif page == "Gravité":
-    gravite.afficher_gravite()
+    gravite.afficher_gravite(dataframes, labels)
 
 elif page == "Demande d'aide":
     demande_aide_final.demande_aide()
