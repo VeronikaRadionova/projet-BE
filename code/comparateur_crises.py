@@ -6,11 +6,11 @@ def afficher_comparateur_crises(dataframes, labels):
     st.title("⚖️ Comparateur de crises – Statistiques globales")
 
     # Vérification de la présence du fichier nécessaire
-    if "tweet_clean" not in dataframes:
-        st.error("Le fichier 'tweet_clean.csv' est manquant dans le dossier CSV.")
+    if "Tweet_clean" not in dataframes:
+        st.error("Le fichier 'Tweet_clean.csv' est manquant dans le dossier CSV.")
         return
 
-    df = dataframes["tweet_clean"]
+    df = dataframes["Tweet_clean"]
 
     # Vérification des colonnes essentielles
     required_cols = {"tweet_id", "topic", "retweet_count", "favorite_count"}
