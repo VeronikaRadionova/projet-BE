@@ -20,7 +20,7 @@ import analyse_et_comparaison_crises
 import base64
 import os
 import pandas as pd
-
+import statsGlobV2
 
 # Injection de CSS personnalisé via st.markdown
 st.markdown("""
@@ -153,74 +153,109 @@ label_to_code = {v: k for k, v in labels.items()}
 # Titre dans la sidebar
 st.sidebar.title("📚 Menu principal")
 
-# Choix de la page
-page = st.sidebar.radio("Navigation", [
-    "Accueil",
-    "Vue d’ensemble",
-    "Recherche personnalisée",
-    "Évolution des tweets dans le temps",
-    "Top hashtags",
-    "Comparateur de crises",
-    "Carte globale des tweets",
-    "Gravité",
-    "Demande d'aide",
-    "Top influenceur",
-    "Analyse et suivi d'une crise"
-])
+choixVersion=st.sidebar.radio("Choix version",["V1","V2"])
 
-# Affichage des pages
-if page == "Accueil":
-    st.title("Bienvenue sur le Tableau de bord des Tweets 📈")
-    st.markdown(
-        """
-        Ce tableau de bord interactif vous permet d’explorer et d’analyser des données issues de Twitter en contexte de crise.  
-        
-        Utilisez le menu à gauche pour :
-        - Voir des statistiques globales sur les tweets
-        - Faire des recherches personnalisees
-        - Visualiser l’évolution des tweets dans le temps
-        - Découvrir les hashtags les plus utilisés
-        - Comparer des crises entre elles
-        - Suivre une crise en particulier
-        - Gravité
-        - Demande d'aide
-        - Top influenceur
-        - (À venir) Analyser les utilisateurs, les catégories, la localisation, etc.
-        """
-    )
+if choixVersion== "V1":
+    # Choix de la page
+    page = st.sidebar.radio("Navigation", [
+        "Accueil",
+        "Vue d’ensemble",
+        "Recherche personnalisée",
+        "Évolution des tweets dans le temps",
+        "Top hashtags",
+        "Comparateur de crises",
+        "Carte globale des tweets",
+        "Gravité",
+        "Demande d'aide",
+        "Top influenceur",
+        "Analyse et suivi d'une crise"
+    ])
 
-elif page == "Vue d’ensemble":
-    statistiques_globales.afficher_statistiques_globales(dataframes,labels)
+    # Affichage des pages
+    if page == "Accueil":
+        st.title("Bienvenue sur le Tableau de bord des Tweets 📈")
+        st.markdown(
+            """
+            Ce tableau de bord interactif vous permet d’explorer et d’analyser des données issues de Twitter en contexte de crise.  
+            
+            Utilisez le menu à gauche pour :
+            - Voir des statistiques globales sur les tweets
+            - Faire des recherches personnalisees
+            - Visualiser l’évolution des tweets dans le temps
+            - Découvrir les hashtags les plus utilisés
+            - Comparer des crises entre elles
+            - Suivre une crise en particulier
+            - Gravité
+            - Demande d'aide
+            - Top influenceur
+            - (À venir) Analyser les utilisateurs, les catégories, la localisation, etc.
+            """
+        )
 
-elif page == "Recherche personnalisée":
-    recherche_personnalisee.recherche_personnalisee(dataframes,labels)
+    elif page == "Vue d’ensemble":
+        statistiques_globales.afficher_statistiques_globales(dataframes,labels)
 
-elif page == "Évolution des tweets dans le temps":
-    tweet_temps.afficher_tweet_temps(dataframes,labels)
+    elif page == "Recherche personnalisée":
+        recherche_personnalisee.recherche_personnalisee(dataframes,labels)
 
-elif page == "Top hashtags":
-    hashtags_top.afficher_hashtag_ids_top(dataframes,labels)
+    elif page == "Évolution des tweets dans le temps":
+        tweet_temps.afficher_tweet_temps(dataframes,labels)
 
-elif page == "Comparateur de crises":
-    comparateur_crises.afficher_comparateur_crises(dataframes,labels)
+    elif page == "Top hashtags":
+        hashtags_top.afficher_hashtag_ids_top(dataframes,labels)
 
-elif page == "Carte globale des tweets":
-    carte_globale.afficher_carte_globale(dataframes,labels)
+    elif page == "Comparateur de crises":
+        comparateur_crises.afficher_comparateur_crises(dataframes,labels)
 
-elif page == "Gravité":
-    gravite.afficher_gravite(dataframes,labels)
+    elif page == "Carte globale des tweets":
+        carte_globale.afficher_carte_globale(dataframes,labels)
 
-elif page == "Demande d'aide":
-    demande_aide_final.demande_aide(dataframes,labels)
+    elif page == "Gravité":
+        gravite.afficher_gravite(dataframes,labels)
 
-elif page == "Top influenceur":
-    top_influenceur.top_influenceurs(dataframes,labels)
+    elif page == "Demande d'aide":
+        demande_aide_final.demande_aide(dataframes,labels)
 
-elif page == "Analyse et suivi d'une crise":
-    analyse_et_comparaison_crises.analyse_complete_crise(dataframes, labels)
+    elif page == "Top influenceur":
+        top_influenceur.top_influenceurs(dataframes,labels)
 
-with st.expander("Informations sur le projet"):
-    st.markdown("""
-    Ce projet est une analyse de tweets pendant une crise, visant à comprendre comment les informations sont diffusées et reçues.
-    Nous utilisons des techniques de traitement de données en temps réel pour observer les tendances et influencer les décisions de gestion de crise.
-    """)
+    elif page == "Analyse et suivi d'une crise":
+        analyse_et_comparaison_crises.analyse_complete_crise(dataframes, labels)
+
+    with st.expander("Informations sur le projet"):
+        st.markdown("""
+        Ce projet est une analyse de tweets pendant une crise, visant à comprendre comment les informations sont diffusées et reçues.
+        Nous utilisons des techniques de traitement de données en temps réel pour observer les tendances et influencer les décisions de gestion de crise.
+        """)
+elif choixVersion=="V2":
+    page = st.sidebar.radio("Navigation", [
+        "Accueil",
+        "Vue d’ensemble",
+        "Recherche personnalisée"
+    ])
+
+    # Affichage des pages
+    if page == "Accueil":
+        st.title("Bienvenue sur le Tableau de bord des Tweets 📈")
+        st.markdown(
+            """
+            Ce tableau de bord interactif vous permet d’explorer et d’analyser des données issues de Twitter en contexte de crise.  
+            
+            Utilisez le menu à gauche pour :
+            - Voir des statistiques globales sur les tweets
+            - Faire des recherches personnalisees
+            - Visualiser l’évolution des tweets dans le temps
+            - Découvrir les hashtags les plus utilisés
+            - Comparer des crises entre elles
+            - Suivre une crise en particulier
+            - Gravité
+            - Demande d'aide
+            - Top influenceur
+            - (À venir) Analyser les utilisateurs, les catégories, la localisation, etc.
+            """
+        )
+    elif page == "Vue d’ensemble":
+        statsGlobV2.afficher_statistiques_globales() 
+      
+    elif page == "Recherche personnalisée":
+        recherche_personnalisee.recherche_personnalisee(dataframes,labels)

@@ -33,10 +33,13 @@ def recherche_personnalisee(dataframes, labels):
         df = df[df["lieu_extrait"].isin(lieux_selectionnes)]
 
     # 🎭 Filtrage par sentiment
-    sentiments = df["sentiment"].dropna().unique()
-    sentiments_selectionnes = st.multiselect("🎭 Sentiment :", options=sorted(sentiments))
-    if sentiments_selectionnes:
-        df = df[df["sentiment"].isin(sentiments_selectionnes)]
+    sentiments =["Tous","Positif","Neutre","Negatif"]
+    sentMap={"Positif":"positive","Negatif":"negative","Neutre":"neutral"}
+    
+    #sentiments_selectionnes = st.multiselect("🎭 Sentiment :", options=sorted(sentiments))
+    sentiments_selectionnes= st.pills("🎭 Sentiment :",options=sentiments,selection_mode="single",default="Tous")
+    if sentiments_selectionnes!="Tous":
+        df = df[df["sentiment"].isin([sentMap[sentiments_selectionnes]])]
 
     # 📄 Affichage des résultats
     st.markdown(f"📄 **{len(df)} tweets** trouvés avec ces filtres.")
