@@ -11,12 +11,12 @@ import tweet_temps
 import hashtags_top
 import statistiques_globales
 import comparateur_crises
-import suivi_detaille_crises
 import carte_globale
 import gravite
 import demande_aide_final
 import top_influenceur
 import recherche_personnalisee
+import analyse_et_comparaison_crises
 import base64
 import os
 import pandas as pd
@@ -161,11 +161,11 @@ page = st.sidebar.radio("Navigation", [
     "Évolution des tweets dans le temps",
     "Top hashtags",
     "Comparateur de crises",
-    "Suivi de crises",
     "Carte globale des tweets",
     "Gravité",
     "Demande d'aide",
-    "Top influenceur"
+    "Top influenceur",
+    "Analyse et suivi d'une crise"
 ])
 
 # Affichage des pages
@@ -204,9 +204,6 @@ elif page == "Top hashtags":
 elif page == "Comparateur de crises":
     comparateur_crises.afficher_comparateur_crises(dataframes,labels)
 
-elif page == "Suivi de crises":
-    suivi_detaille_crises.afficher_suivi_detaille_crises(dataframes,labels)
-
 elif page == "Carte globale des tweets":
     carte_globale.afficher_carte_globale(dataframes,labels)
 
@@ -218,6 +215,9 @@ elif page == "Demande d'aide":
 
 elif page == "Top influenceur":
     top_influenceur.top_influenceurs(dataframes,labels)
+
+elif page == "Analyse et suivi d'une crise":
+    analyse_et_comparaison_crises.analyse_complete_crise(dataframes, labels)
 
 with st.expander("Informations sur le projet"):
     st.markdown("""
