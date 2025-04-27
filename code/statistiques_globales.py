@@ -105,8 +105,6 @@ def create_heatmap(df):
         # Ici, on ajoute plus d'informations au tooltip
         tooltip_content = f"""
         <b>📌 Crise :</b> {topic}<br>
-        <b>🔢 Tweets :</b> {n_tweets}<br>
-        <b>🙂 % Positifs :</b> {p_positif:.1f}%
         """
 
         folium.CircleMarker(
