@@ -6,11 +6,11 @@ import plotly.graph_objects as go
 def analyse_complete_crise(dataframes, labels):
     st.title("🔎 Analyse et suivi d'une crise : Volume & Sentiments")
 
-    if "tweets_with_sentiments" not in dataframes:
-        st.error("Le fichier 'tweets_with_sentiments.csv' est manquant.")
+    if "Tweet_sentiment_localisation" not in dataframes:
+        st.error("Le fichier 'Tweet_sentiment_localisation.csv' est manquant.")
         return
 
-    df = dataframes["tweets_with_sentiments"]
+    df = dataframes["Tweet_sentiment_localisation"]
     df["created_at"] = pd.to_datetime(df["created_at"], errors="coerce")
     
     label_to_code = {v: k for k, v in labels.items()}
@@ -59,7 +59,7 @@ def analyse_complete_crise(dataframes, labels):
             'negative': set3_colors[2]
         }
 
-        roberta_counts = df_crisis['roberta_label'].value_counts().reset_index()
+        roberta_counts = df_crisis['sentiment'].value_counts().reset_index()
         roberta_counts.columns = ['Sentiment', 'Tweets']
 
         fig_bar = px.bar(
@@ -72,7 +72,7 @@ def analyse_complete_crise(dataframes, labels):
         )
         fig_bar.update_layout(barmode='stack')
 
-        value_counts = df_crisis['roberta_label'].value_counts()
+        value_counts = df_crisis['sentiment'].value_counts()
         labels_pie = value_counts.index.tolist()
         values_pie = value_counts.values.tolist()
         donut_colors = [color_map.get(label, '#333333') for label in labels_pie]
@@ -94,7 +94,7 @@ def analyse_complete_crise(dataframes, labels):
     # Évolution des sentiments---
     with st.expander("⏳ Sentiment moyen dans le temps"):
         sentiment_map = {'negative': -1, 'neutral': 0, 'positive': 1}
-        df_crisis['roberta_score'] = df_crisis['roberta_label'].map(sentiment_map)
+        df_crisis['roberta_score'] = df_crisis['sentiment'].map(sentiment_map)
 
         daily_sentiment = df_crisis.groupby('date')['roberta_score'].mean().reset_index()
 
