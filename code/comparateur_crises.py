@@ -5,11 +5,11 @@ import plotly.express as px
 def afficher_comparateur_crises(dataframes, labels):
     st.title("⚖️ Comparateur de crises – Statistiques globales")
 
-    if "Tweet_clean" not in dataframes:
-        st.error("Le fichier 'Tweet_clean.csv' est manquant.")
+    if "Tweet_sentiment_localisation" not in dataframes:
+        st.error("Le fichier 'Tweet_sentiment_localisation.csv' est manquant.")
         return
 
-    df = dataframes["Tweet_clean"]
+    df = dataframes["Tweet_sentiment_localisation"]
 
     required_cols = {"tweet_id", "topic", "retweet_count", "favorite_count"}
     if not required_cols.issubset(df.columns):
@@ -89,3 +89,48 @@ def afficher_comparateur_crises(dataframes, labels):
     )
     fig_pie.update_traces(textinfo="percent+label")
     st.plotly_chart(fig_pie, use_container_width=True)
+
+    # --- 📈 Répartition du sentiment par crise ---
+    st.subheader("💬 Répartition du sentiment par crise")
+    sentiment_counts = df_filtered.groupby(["topic", "sentiment"]).size().reset_index(name="count")
+    sentiment_counts["topic"] = sentiment_counts["topic"].map(readable_topics)
+
+    fig_sentiment = px.bar(
+        sentiment_counts,
+        x="sentiment",
+        y="count",
+        color="topic",
+        barmode="group",
+        text_auto=True,
+        title="Répartition des sentiments par crise",
+        labels={"sentiment": "Sentiment", "count": "Nombre de Tweets"}
+    )
+    fig_sentiment.update_layout(xaxis_tickangle=-45, title_x=0.5)
+    st.plotly_chart(fig_sentiment, use_container_width=True)
+     # --- 🥧 Répartition des catégories de posts ---
+    st.subheader("📚 Répartition des catégories de posts")
+
+    # Assurer que 'post_category' est bien une liste et exploser
+    df_filtered['post_category'] = df_filtered['post_category'].apply(lambda x: eval(x) if isinstance(x, str) else x)
+    df_exploded = df_filtered.explode('post_category')
+
+    # Supprimer les valeurs nulles après explosion
+    df_exploded = df_exploded.dropna(subset=['post_category'])
+
+    category_counts = df_exploded.groupby(["topic", "post_category"]).size().reset_index(name="count")
+    category_counts["topic"] = category_counts["topic"].map(readable_topics)
+
+    fig_category = px.bar(
+        category_counts,
+        x="post_category",
+        y="count",
+        color="topic",
+        barmode="group",
+        text_auto=True,
+        title="Comparaison des types de posts entre crises",
+        labels={"post_category": "Catégorie de Post", "count": "Nombre de Tweets"}
+    )
+    fig_category.update_layout(xaxis_tickangle=-45, title_x=0.5)
+    st.plotly_chart(fig_category, use_container_width=True)
+
+

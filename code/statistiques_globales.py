@@ -3,6 +3,8 @@ import pandas as pd
 import folium
 from folium.plugins import HeatMap
 from streamlit_folium import st_folium
+import plotly.express as px
+
 
 def afficher_statistiques_globales(dataframes, labels):
     st.title("📊 Statistiques globales")
@@ -53,12 +55,16 @@ def afficher_statistiques_globales(dataframes, labels):
         st.code(top_tweet["text"], language="markdown")
         st.write(f"Retweets : {top_tweet['retweet_count']} | Likes : {top_tweet['favorite_count']}")
 
+    afficher_statistiques_temps(df)
     # Carte de chaleur géographique des tweets
     if {'latitude', 'longitude'}.issubset(df.columns):
         st.subheader("🌍 Carte de chaleur géographique des tweets + Infos par crise")
         create_heatmap(df)
     else:
         st.warning("Aucune donnée géolocalisée trouvée.")
+    
+
+    
 
 
 def get_top_tweet(df):
@@ -116,3 +122,24 @@ def create_heatmap(df):
     # Affichage dans Streamlit
     st_folium(m, use_container_width=True, height=600)
 
+def afficher_statistiques_temps(df):
+    # --- 📈 Évolution des tweets dans le temps ---
+    st.subheader("📅 Évolution des tweets dans le temps")
+
+    # Vérifiez que la colonne 'created_at' est bien au format datetime
+    if "created_at" in df.columns:
+        df["date"] = df["created_at"].dt.date  # Extraire uniquement la date
+        tweets_per_day = df.groupby("date").size().reset_index(name="Nombre_de_tweets")
+
+        fig_time = px.line(
+            tweets_per_day,
+            x="date",
+            y="Nombre_de_tweets",
+            title="Évolution du nombre de tweets dans le temps",
+            labels={"date": "Date", "Nombre_de_tweets": "Nombre de Tweets"},
+            markers=True
+        )
+        fig_time.update_layout(title_x=0.5, xaxis_title="Date", yaxis_title="Nombre de Tweets")
+        st.plotly_chart(fig_time, use_container_width=True)
+    else:
+        st.warning("La colonne 'created_at' est manquante ou mal formatée.")
