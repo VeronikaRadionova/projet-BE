@@ -21,6 +21,7 @@ import base64
 import os
 import pandas as pd
 import statsGlobV2
+import analyse_et_comparaison_crisesV2
 
 # Injection de CSS personnalisé via st.markdown
 st.markdown("""
@@ -231,6 +232,9 @@ elif choixVersion=="V2":
     page = st.sidebar.radio("Navigation", [
         "Accueil",
         "Vue d’ensemble",
+        "Suivi de crise",
+        "Comparateur de crises",
+        "Demande d'aide",
         "Recherche personnalisée"
     ])
 
@@ -255,7 +259,13 @@ elif choixVersion=="V2":
             """
         )
     elif page == "Vue d’ensemble":
-        statsGlobV2.afficher_statistiques_globales() 
+        statsGlobV2.afficher_statistiques_globales(dataframes,labels) 
       
     elif page == "Recherche personnalisée":
         recherche_personnalisee.recherche_personnalisee(dataframes,labels)
+    elif page == "Suivi de crise":
+        analyse_et_comparaison_crisesV2.analyse_complete_crise(dataframes, labels)
+    elif page == "Demande d'aide":
+        demande_aide_final.demande_aide(dataframes,labels)
+    elif page == "Comparateur de crises":
+        comparateur_crises.afficher_comparateur_crises(dataframes,labels)

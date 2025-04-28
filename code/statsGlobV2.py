@@ -6,14 +6,19 @@ from streamlit_folium import st_folium
 import plotly.express as px
 
 
-def afficher_statistiques_globales():
+def afficher_statistiques_globales(dataframes,labels):
     st.title("📊 Statistiques globales")
 
-    try:
-        df = pd.read_csv("../CSV/Tweet_sentiment_localisation.csv", parse_dates=["created_at"])
-    except FileNotFoundError:
-        st.error("Fichier Tweet_sentiment_localisation.csv introuvable.")
+    # Vérification si les données sont présentes
+    if "Tweet_sentiment_localisation" not in dataframes:
+        st.error("Le fichier 'Tweet_sentiment_localisation.csv' est manquant.")
         return
+
+    # Chargement des données
+    df = dataframes["Tweet_sentiment_localisation"]
+    df["created_at"] = pd.to_datetime(df["created_at"], errors="coerce")
+    df["topic"] = df["topic"].map(labels).fillna(df["topic"])
+
     
 
     #Chargement des données
@@ -28,8 +33,8 @@ def afficher_statistiques_globales():
     nb_sensitive = df["possibly_sensitive"].sum()
 
     #Affichage des données
-    col1,col2,col3= st.columns(3)
-
+    col1,col2= st.columns(2,border=True,gap="large")
+    col3,col4= st.columns(2,border=True,gap="large")
     with col1:
         st.write("🐤 Tweets au total", f"{total_tweets:n}")
         st.write("🗓️ Période couverte", f"{date_min} → {date_max}")
@@ -37,13 +42,14 @@ def afficher_statistiques_globales():
         st.write("🔁 Retweets totaux", f"{total_retweets:n}")
         st.write("❤️ Likes totaux", f"{total_likes:n}")
         st.write("🚨 Tweets sensibles", f"{int(nb_sensitive)}")
-        st.write("📌 Tweets annotés : {int(nb_annotated)}")
-        st.write("📌 Tweets de priorité haute : {nb_high_priority}")
+        st.write(f"- Tweets annotés : **{int(nb_annotated)}**")
+        st.write(f"- Tweets de priorité haute : **{nb_high_priority}**")
     with col2:
         afficher_statistiques_temps(df)
     with col3:
         create_heatmap(df)
-
+    with col4: 
+        afficherHashtag(dataframes)
 def create_heatmap(df):
     geo_df = df.dropna(subset=['latitude', 'longitude'])
 
@@ -61,13 +67,12 @@ def create_heatmap(df):
     # Ajouter des marqueurs pour chaque crise
     df_points = geo_df.drop_duplicates(subset="topic")
     for _, row in df_points.iterrows():
-        topic = row["topic"] #TODO changer les TRECIS en nom de crises
+        topic = row["topic"]
         crisis_df = geo_df[geo_df["topic"] == topic]
         n_tweets = len(crisis_df)
         n_positif = crisis_df[crisis_df["sentiment"] == "positive"].shape[0]
         p_positif = (n_positif / n_tweets) * 100 if n_tweets > 0 else 0
         exemple = crisis_df["text"].dropna().iloc[0][:100] + "..."
-
         popup_content = f"""
         <b>📌 Crise :</b> {topic}<br>
         <b>🔢 Tweets :</b> {n_tweets}<br>
@@ -105,7 +110,8 @@ def afficher_statistiques_temps(df):
             tweets_per_day,
             x="date",
             y="Nombre_de_tweets",
-            title="Évolution du nombre de tweets dans le temps",
+            title=" " \
+            "",
             labels={"date": "Date", "Nombre_de_tweets": "Nombre de Tweets"},
             markers=True
         )
@@ -113,3 +119,44 @@ def afficher_statistiques_temps(df):
         st.plotly_chart(fig_time, use_container_width=True)
     else:
         st.warning("La colonne 'created_at' est manquante ou mal formatée.")
+
+def afficherHashtag(dataframes):
+    # Vérifie la présence du fichier nécessaire
+    if "Hashtag_clean" not in dataframes:
+        st.error("Le fichier 'Hashtag_clean.csv' est manquant dans le dossier CSV.")
+        return
+
+    df = dataframes["Hashtag_clean"]
+
+    # Vérification des colonnes nécessaires
+    required_columns = {"hashtag_id", "occurences"}
+    if not required_columns.issubset(df.columns):
+        st.error("Colonnes attendues manquantes dans le DataFrame.")
+        return
+
+    # Nettoyage des hashtags
+    df['hashtag_id'] = df['hashtag_id'].astype(str).str.lower().str.strip()
+
+    # Agrégation des occurrences
+    top_hashtag_ids = df.groupby('hashtag_id')['occurences'].sum().reset_index()
+    top_hashtag_ids = top_hashtag_ids.sort_values(by='occurences', ascending=False)
+
+    # Slider interactif
+    top_n = st.slider("Nombre de hashtags à afficher", min_value=5, max_value=30, value=10)
+
+    # Affichage du graphique
+    fig = px.bar(
+        top_hashtag_ids.head(top_n),
+        x='occurences',
+        y='hashtag_id',
+        orientation='h',
+        title=f"Top {top_n} des hashtags les plus utilisés",
+        labels={'occurences': 'Nombre d’occurrences', 'hashtag_id': 'Hashtag'}
+    )
+
+    fig.update_layout(
+        yaxis={'categoryorder': 'total ascending'},
+        title_x=0.5
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
