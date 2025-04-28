@@ -232,6 +232,7 @@ elif choixVersion=="V2":
         "Recherche personnalisée"
     ])
 
+
     # Affichage des pages
     if page == "Accueil":
         st.title("Bienvenue sur le Tableau de bord des Tweets 📈")
@@ -254,7 +255,6 @@ elif choixVersion=="V2":
         )
     elif page == "Vue d’ensemble":
         statsGlobV2.afficher_statistiques_globales(dataframes,labels) 
-      
     elif page == "Recherche personnalisée":
         recherche_personnalisee.recherche_personnalisee(dataframes,labels)
     elif page == "Suivi de crise":
