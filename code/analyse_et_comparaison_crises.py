@@ -49,6 +49,9 @@ def analyse_complete_crise(dataframes, labels):
         freq = df_crisis.groupby("date").size().reset_index(name="nb_tweets")
         fig_freq = px.line(freq, x="date", y="nb_tweets", markers=True, title="Évolution du volume de tweets")
         st.plotly_chart(fig_freq, use_container_width=True)
+        st.subheader("📊 Données journalières")
+        tweet_counts = df_crisis.groupby('date').size().reset_index(name='Nombre de tweets')
+        st.dataframe(tweet_counts, use_container_width=True)
 
     # Répartition des sentiments ---
     with st.expander("🎭 Répartition des sentiments"):

@@ -7,7 +7,6 @@ st.set_page_config(
     layout="wide"
 )
 
-import tweet_temps
 import hashtags_top
 import statistiques_globales
 import comparateur_crises
@@ -161,15 +160,14 @@ if choixVersion== "V1":
     page = st.sidebar.radio("Navigation", [
         "Accueil",
         "Vue d’ensemble",
+        "Analyse et suivi d'une crise",
         "Recherche personnalisée",
-        "Évolution des tweets dans le temps",
         "Top hashtags",
         "Comparateur de crises",
         "Carte globale des tweets",
         "Gravité",
         "Demande d'aide",
-        "Top influenceur",
-        "Analyse et suivi d'une crise"
+        "Top influenceur"
     ])
 
     # Affichage des pages
@@ -182,7 +180,6 @@ if choixVersion== "V1":
             Utilisez le menu à gauche pour :
             - Voir des statistiques globales sur les tweets
             - Faire des recherches personnalisees
-            - Visualiser l’évolution des tweets dans le temps
             - Découvrir les hashtags les plus utilisés
             - Comparer des crises entre elles
             - Suivre une crise en particulier
@@ -198,9 +195,6 @@ if choixVersion== "V1":
 
     elif page == "Recherche personnalisée":
         recherche_personnalisee.recherche_personnalisee(dataframes,labels)
-
-    elif page == "Évolution des tweets dans le temps":
-        tweet_temps.afficher_tweet_temps(dataframes,labels)
 
     elif page == "Top hashtags":
         hashtags_top.afficher_hashtag_ids_top(dataframes,labels)
