@@ -118,3 +118,52 @@ def analyse_complete_crise(dataframes, labels):
             st.markdown(f"📅 *{row['created_at']}* – ❤️ {row['favorite_count']} – 🔁 {row['retweet_count']}")
             st.markdown(f"> {row['text']}")
             st.markdown("---")
+
+    set3_colors = px.colors.qualitative.Set3
+
+    # Préparer le DataFrame des catégories
+    df_temp = df_crisis.copy()
+
+    # Assurer que post_category est une liste
+    df_temp['post_category'] = df_temp['post_category'].apply(lambda x: eval(x) if isinstance(x, str) else x)
+
+    # Exploser (un tweet avec plusieurs catégories = plusieurs lignes)
+    df_exploded = df_temp.explode('post_category')
+    df_exploded = df_exploded.dropna(subset=['post_category'])
+
+    # Maintenant df_exploded est prêt ✅
+    unique_categories = df_exploded['post_category'].dropna().unique()
+    color_map_category = {cat: set3_colors[i % len(set3_colors)] for i, cat in enumerate(unique_categories)}
+
+    category_counts = df_exploded['post_category'].value_counts().reset_index()
+    category_counts.columns = ['Catégorie', 'Tweets']
+
+    # --- 📊 Graphique Barres ---
+    fig_bar_category = px.bar(
+        category_counts,
+        x='Catégorie',
+        y='Tweets',
+        color='Catégorie',
+        color_discrete_map=color_map_category,
+        title="Distribution des catégories de posts"
+    )
+    fig_bar_category.update_layout(barmode='stack', xaxis_tickangle=-45)
+
+    # --- 🥧 Graphique Donut ---
+    labels_pie_cat = category_counts['Catégorie'].tolist()
+    values_pie_cat = category_counts['Tweets'].tolist()
+    donut_colors_cat = [color_map_category.get(label, '#333333') for label in labels_pie_cat]
+
+    fig_pie_category = go.Figure(data=[go.Pie(
+        labels=labels_pie_cat,
+        values=values_pie_cat,
+        hole=0.4,
+        marker=dict(colors=donut_colors_cat),
+        textinfo='percent'
+    )])
+
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        st.plotly_chart(fig_bar_category, use_container_width=True)
+    with col2:
+        st.plotly_chart(fig_pie_category, use_container_width=True)
