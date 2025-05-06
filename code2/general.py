@@ -1,0 +1,1 @@
+#TODO faire/demenager fonctions qui ne sont pas rangeable dans les autres fichiers

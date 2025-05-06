@@ -1,5 +1,8 @@
 import streamlit as st
 
+import affichage
+import base64
+import variables
 # Configuration de la page
 st.set_page_config(
     page_title="Tableau de bord des Tweets",
@@ -99,6 +102,7 @@ for file_name in os.listdir(csv_path):
         file_path = os.path.join(csv_path, file_name)
         df_name = os.path.splitext(file_name)[0]
         dataframes[df_name] = pd.read_csv(file_path, low_memory=False)
+        
 page = st.sidebar.radio("Navigation", [
         "Accueil",
         "Vue d’ensemble",
@@ -111,31 +115,14 @@ page = st.sidebar.radio("Navigation", [
 
 # Affichage des pages
 if page == "Accueil":
-    st.title("Bienvenue sur le Tableau de bord des Tweets 📈")
-    st.markdown(
-        """
-        Ce tableau de bord interactif vous permet d’explorer et d’analyser des données issues de Twitter en contexte de crise.  
-        
-        Utilisez le menu à gauche pour :
-        - Voir des statistiques globales sur les tweets
-        - Faire des recherches personnalisees
-        - Visualiser l’évolution des tweets dans le temps
-        - Découvrir les hashtags les plus utilisés
-        - Comparer des crises entre elles
-        - Suivre une crise en particulier
-        - Gravité
-        - Demande d'aide
-        - Top influenceur
-        - (À venir) Analyser les utilisateurs, les catégories, la localisation, etc.
-        """
-    )
+    affichage.accueil()
 elif page == "Vue d’ensemble":
-    statsGlobV2.afficher_statistiques_globales(dataframes,labels) 
+    affichage.afficher_statistiques_globales(dataframes,labels) 
 elif page == "Recherche personnalisée":
-    recherche_personnalisee.recherche_personnalisee(dataframes,labels)
+    affichage.recherche_personnalisee(dataframes,labels)
 elif page == "Suivi de crise":
-    analyse_et_comparaison_crisesV2.analyse_complete_crise(dataframes, labels)
+    affichage.suiviCrise(dataframes)
 elif page == "Demande d'aide":
-    demande_aide_final.demande_aide(dataframes,labels)
+    affichage.demande_aide(dataframes,labels)
 elif page == "Comparateur de crises":
-    suiviV2.afficher_comparateur_crises(dataframes,labels)
+    affichage.afficher_comparateur_crises(dataframes,labels)
