@@ -164,5 +164,4 @@ elif page == "Demande d'aide":
     #TODO definir et implémenter la fonction pour afficher les demandes d'aide
     affichage.demande_aide(dataframes,labels)
 elif page == "Comparateur de crises":
-    #TODO definir et implémenter la fonction pour afficher le comparateur de crises
-    affichage.afficher_comparateur_crises(dataframes,labels)
+    affichage.comparateurCrises(dataframes)
