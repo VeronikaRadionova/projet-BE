@@ -41,6 +41,8 @@ def suiviCrise(data):
 
     sentiment.repartitionSentiment(df_crisis)
     sentiment.sentimentMoyen(df_crisis)
+    #TODO rajouter la gravite
+    #TODO rajouter la demande d'aide
 
 
 def recherchePersonalisee(dataframes):
