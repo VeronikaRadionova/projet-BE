@@ -43,29 +43,3 @@ def repartitionSentiment(df_crisis):
         st.plotly_chart(fig_bar, use_container_width=True)
     with col2:
         st.plotly_chart(fig_pie, use_container_width=True)
-
-def sentimentMoyen(df_crisis):
-        sentiment_map = {'negative': -1, 'neutral': 0, 'positive': 1}
-        df_crisis['roberta_score'] = df_crisis['sentiment'].map(sentiment_map)
-        df_crisis["date"] = df_crisis["created_at"].dt.date
-
-        daily_sentiment = df_crisis.groupby('date')['roberta_score'].mean().reset_index()
-
-        fig_sentiment = px.line(
-            daily_sentiment,
-            x='date',
-            y='roberta_score',
-            title='Évolution du sentiment moyen',
-            markers=True,
-            labels={'roberta_score': 'Sentiment Moyen (-1 = Négatif, 1 = Positif)', 'date': 'Date'}
-        )
-
-        fig_sentiment.update_layout(
-            xaxis_title='Date',
-            yaxis_title='Sentiment Moyen',
-            xaxis_tickangle=-45,
-            yaxis=dict(dtick=0.5),
-            template='plotly_white'
-        )
-
-        st.plotly_chart(fig_sentiment, use_container_width=True)
