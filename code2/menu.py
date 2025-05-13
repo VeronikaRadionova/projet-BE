@@ -154,12 +154,15 @@ page = st.sidebar.radio("Navigation", [
 if page == "Accueil":
     affichage.accueil()
 elif page == "Vue d’ensemble":
+    #TODO definir et implémenter la fonction pour afficher les statistiques globales
     affichage.afficher_statistiques_globales(dataframes,labels) 
 elif page == "Recherche personnalisée":
     affichage.recherchePersonalisee(dataframes)
 elif page == "Suivi de crise":
     affichage.suiviCrise(dataframes)
 elif page == "Demande d'aide":
+    #TODO definir et implémenter la fonction pour afficher les demandes d'aide
     affichage.demande_aide(dataframes,labels)
 elif page == "Comparateur de crises":
+    #TODO definir et implémenter la fonction pour afficher le comparateur de crises
     affichage.afficher_comparateur_crises(dataframes,labels)
