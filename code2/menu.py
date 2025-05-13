@@ -119,7 +119,7 @@ if page == "Accueil":
     affichage.accueil()
 elif page == "Vue d’ensemble":
     #TODO definir et implémenter la fonction pour afficher les statistiques globales
-    affichage.afficher_statistiques_globales(dataframes,labels) 
+    affichage.vueEnsemble(dataframes) 
 elif page == "Recherche personnalisée":
     affichage.recherchePersonalisee(dataframes)
 elif page == "Suivi de crise":
