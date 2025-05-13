@@ -40,7 +40,6 @@ def suiviCrise(data):
         st.markdown(f"- **Dernier tweet** : {dernier_tweet.strftime('%Y-%m-%d %H:%M')}")
 
     sentiment.repartitionSentiment(df_crisis)
-    sentiment.sentimentMoyen(df_crisis)
     #TODO rajouter la gravite
     #TODO rajouter la demande d'aide
 
