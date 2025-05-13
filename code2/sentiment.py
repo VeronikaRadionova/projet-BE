@@ -47,6 +47,7 @@ def repartitionSentiment(df_crisis):
 def sentimentMoyen(df_crisis):
         sentiment_map = {'negative': -1, 'neutral': 0, 'positive': 1}
         df_crisis['roberta_score'] = df_crisis['sentiment'].map(sentiment_map)
+        df_crisis["date"] = df_crisis["created_at"].dt.date
 
         daily_sentiment = df_crisis.groupby('date')['roberta_score'].mean().reset_index()
 
