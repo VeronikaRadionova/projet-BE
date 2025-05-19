@@ -1,4 +1,3 @@
-#TODO faire/demenager fonctions qui ne sont pas rangeable dans les autres fichiers
 import streamlit as st
 import folium
 from folium.plugins import HeatMap
@@ -151,3 +150,11 @@ def afficher_repartition_par_topic(df):
     )
     fig_topic_pie.update_traces(textinfo="percent+label")
     st.plotly_chart(fig_topic_pie, use_container_width=True)
+
+def afficherTimeline(data):
+    st.subheader("📅 Évolution des tweets par jour")
+    daily_stats = data.groupby([data['created_at'].dt.date, 'event_type']).size().reset_index(name='tweets')
+    fig4 = px.line(daily_stats, x="created_at", y="tweets", color="event_type",
+                    title="Nombre de tweets par jour et par crise",
+                    labels={"created_at": "Date", "tweets": "Tweets", "event_type": "Crise"})
+    st.plotly_chart(fig4, use_container_width=True)
