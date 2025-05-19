@@ -302,7 +302,7 @@ def afficher_gravite(dataframes, labels) :
                         st.markdown(
                             f"""
                             <div style="background-color:{couleur}; padding: 10px; border-radius: 10px; margin-bottom:10px; border: 1px solid #ccc;">
-                                <p style="margin: 0; font-size: 14px;">{texte}</p>
+                                <p style="margin: 0; font-size: 14px;color: black">{texte}</p>
                             </div>""",
                             unsafe_allow_html=True
                         )
