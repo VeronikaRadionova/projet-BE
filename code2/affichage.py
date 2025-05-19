@@ -98,9 +98,8 @@ def suiviCrise(data):
     gravite.afficher_gravite_event_plotly(df_selected,selected_label)
     gravite.afficher_tweets_gravite(df_selected)
     
-
-
-    aide.proportionAideTweet(merged)
+    aide.getInfosAide(merged)
+    aide.getRepartitionTypeDemande(merged)
    
 
 def recherchePersonalisee(dataframes):
