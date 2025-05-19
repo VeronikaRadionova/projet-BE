@@ -125,7 +125,7 @@ elif page == "Recherche personnalisée":
 elif page == "Suivi de crise":
     affichage.suiviCrise(dataframes)
 elif page == "Demande d'aide":
-    #TODO definir et implémenter la fonction pour afficher les demandes d'aide
+    #TODO definir et implémenter la fonction pour afficher les demandes d'aide ---> Deja affiché en suivi de crise alors a voir si on le garde ou pas
     affichage.demande_aide(dataframes,labels)
 elif page == "Comparateur de crises":
     affichage.comparateurCrises(dataframes)
