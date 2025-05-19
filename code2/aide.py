@@ -15,7 +15,7 @@ def getInfosAide(data):
         help_stats = data.groupby('event_type')['is_help'].mean().reset_index(name='pourcentage_aide')
         help_stats['pourcentage_aide'] *= 100
         pourcentage = sensitive_stats['possibly_sensitive'][0]
-        st.write(f"Pourcentage de tweets demandant de l'aide : {int(help_stats["pourcentage_aide"][0])}% ({help_counts["count"][1]} demande d'aides contre {help_counts["count"][0]} autres)")
+        st.write(f"Pourcentage de tweets demandant de l'aide : {int(help_stats['pourcentage_aide'][0])}% ({help_counts['count'][1]} demande d'aides contre {help_counts['count'][0]} autres)")
         st.write(f"Pourcentage de tweets possiblement sensible :{int(pourcentage)}%")
         
 
