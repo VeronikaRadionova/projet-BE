@@ -1,4 +1,3 @@
-#TODO faire/demenager les fonctions qui font de l'affichage
 import streamlit as st
 import variables
 import general
@@ -7,6 +6,9 @@ import sentiment
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
+import gravite
+import aide
+import variables
 
 
 def accueil():
@@ -82,15 +84,24 @@ def suiviCrise(data):
     df= data["Tweet_sentiment_localisation"]
     df["created_at"] = pd.to_datetime(df["created_at"], errors="coerce")
     df_crisis= df[(df["topic"]==variables.getCrisesTrecis(data)[selected_label])]
+    merged = variables.getMergedDemandeDaide(data)
+    merged = merged[merged['event_id'] == selected_label]
     st.markdown(f"- **Nombre de tweets** : {len(df_crisis)}")
     dernier_tweet = df_crisis["created_at"].max()
     if pd.notnull(dernier_tweet):
         st.markdown(f"- **Dernier tweet** : {dernier_tweet.strftime('%Y-%m-%d %H:%M')}")
-
+    general.afficherTimeline(merged)
     sentiment.repartitionSentiment(df_crisis)
-    #TODO rajouter la gravite
-    #TODO rajouter la demande d'aide
+    df_event = data["tweets_par_event"]
+    eventids = sorted(df_event['crise_id'].astype(str).unique())
+    df_selected = df_event[df_event['crise_id'].astype(str) == selected_label]
+    gravite.afficher_gravite_event_plotly(df_selected,selected_label)
+    gravite.afficher_tweets_gravite(df_selected)
+    
 
+
+    aide.proportionAideTweet(merged)
+   
 
 def recherchePersonalisee(dataframes):
 
