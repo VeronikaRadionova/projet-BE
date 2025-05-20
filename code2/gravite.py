@@ -209,21 +209,20 @@ gravite_couleurs = {
 }
 
 def afficher_tweets_gravite(df):
-    with st.expander("📃 Aperçu de quelques tweets classés par gravité"):
-        gravite_niveaux = ["Low", "Medium", "High", "Critical"]
-        colonnes_affichables = [g for g in gravite_niveaux if not df[df["annotation_postPriority"] == g].empty]
-        colonnes = st.columns(len(colonnes_affichables))
-        for i, gravite in enumerate(colonnes_affichables):
-            with colonnes[i]:
-                st.markdown(f"### {gravite}")
-                subset = df[df["annotation_postPriority"] == gravite].head(5)
-                for _, row in subset.iterrows():
-                    texte = row.get("text", "")
-                    couleur = gravite_couleurs.get(gravite, "#f0f0f0")
-                    st.markdown(
-                        f"""
-                        <div style="background-color:{couleur}; padding: 10px; border-radius: 10px; margin-bottom:10px; border: 1px solid #ccc;">
-                            <p style="margin: 0; font-size: 14px;color: black">{texte}</p>
-                        </div>""",
-                        unsafe_allow_html=True
-                    )
+    gravite_niveaux = ["Low", "Medium", "High", "Critical"]
+    colonnes_affichables = [g for g in gravite_niveaux if not df[df["annotation_postPriority"] == g].empty]
+    colonnes = st.columns(len(colonnes_affichables))
+    for i, gravite in enumerate(colonnes_affichables):
+        with colonnes[i]:
+            st.markdown(f"### {gravite}")
+            subset = df[df["annotation_postPriority"] == gravite].head(5)
+            for _, row in subset.iterrows():
+                texte = row.get("text", "")
+                couleur = gravite_couleurs.get(gravite, "#f0f0f0")
+                st.markdown(
+                    f"""
+                    <div style="background-color:{couleur}; padding: 10px; border-radius: 10px; margin-bottom:10px; border: 1px solid #ccc;">
+                        <p style="margin: 0; font-size: 14px;color: black">{texte}</p>
+                    </div>""",
+                    unsafe_allow_html=True
+                )

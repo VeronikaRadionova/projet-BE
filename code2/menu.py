@@ -109,7 +109,6 @@ page = st.sidebar.radio("Navigation", [
         "Suivi de crise",
         "Carte globale des tweets",
         "Comparateur de crises",
-        "Demande d'aide",
         "Recherche personnalisée"
     ])
 
@@ -124,9 +123,6 @@ elif page == "Recherche personnalisée":
     affichage.recherchePersonalisee(dataframes)
 elif page == "Suivi de crise":
     affichage.suiviCrise(dataframes)
-elif page == "Demande d'aide":
-    #TODO definir et implémenter la fonction pour afficher les demandes d'aide
-    affichage.demande_aide(dataframes,labels)
 elif page == "Comparateur de crises":
     affichage.comparateurCrises(dataframes)
 elif page == "Carte globale des tweets":

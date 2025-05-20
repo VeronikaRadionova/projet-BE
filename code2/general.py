@@ -3,6 +3,7 @@ import folium
 from folium.plugins import HeatMap
 from streamlit_folium import st_folium
 import plotly.express as px
+import numpy as np
 
 def create_heatmap(df):
     geo_df = df.dropna(subset=['latitude', 'longitude'])
@@ -158,3 +159,61 @@ def afficherTimeline(data):
                     title="Nombre de tweets par jour et par crise",
                     labels={"created_at": "Date", "tweets": "Tweets", "event_type": "Crise"})
     st.plotly_chart(fig4, use_container_width=True)
+
+def afficherLocalisation(df):
+
+    df_geo = df.dropna(subset=["latitude", "longitude", "retweet_count", "sentiment", "text"])
+    df_geo = df_geo[(df_geo["latitude"] != 0) & (df_geo["longitude"] != 0)]
+
+    if df_geo.empty:
+        st.warning("Aucun tweet géolocalisé trouvé.")
+        return
+
+
+    # Filtrer par nombre minimal de retweets
+
+    if df_geo.empty:
+        st.warning("Aucun tweet ne correspond au seuil de retweets.")
+        return
+
+    # Ajouter un jitter pour éviter le chevauchement
+    np.random.seed(42)
+    df_geo["latitude_jitter"] = df_geo["latitude"] + np.random.uniform(-0.01, 0.01, size=len(df_geo))
+    df_geo["longitude_jitter"] = df_geo["longitude"] + np.random.uniform(-0.01, 0.01, size=len(df_geo))
+
+    df_geo["taille_point"] = df_geo["retweet_count"].apply(lambda x: max(5, min(x * 0.5, 40)))
+
+
+    
+    fig = px.scatter_mapbox(
+        df_geo,
+        lat="latitude",
+        lon="longitude",
+        # hover_name="text",
+        # hover_data={"retweet_count": True, "sentiment": True},
+        size="taille_point",
+        color="sentiment",
+        color_discrete_map={
+            "positive": "green",
+            "neutral": "gray",
+            "negative": "red"
+        },
+        zoom=2,
+        height=700
+    )
+
+    # Layout final
+    fig.update_layout(
+        mapbox=dict(
+            style="open-street-map",
+            zoom=2,
+            center=dict(
+                lat=df_geo["latitude"].mean(),
+                lon=df_geo["longitude"].mean()
+            )
+        ),
+        height=700,
+        margin={"r": 0, "t": 0, "l": 0, "b": 0}
+    )
+
+    st.plotly_chart(fig, use_container_width=True)

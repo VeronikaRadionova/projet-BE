@@ -77,6 +77,7 @@ def vueEnsemble(dataframes):
 
 
 def suiviCrise(data):
+    
     st.title("🔎 Analyse et suivi d'une crise : Volume & Sentiments")
 
     selected_label=st.selectbox("Crises",variables.getCrises(data))
@@ -90,17 +91,25 @@ def suiviCrise(data):
     dernier_tweet = df_crisis["created_at"].max()
     if pd.notnull(dernier_tweet):
         st.markdown(f"- **Dernier tweet** : {dernier_tweet.strftime('%Y-%m-%d %H:%M')}")
-    general.afficherTimeline(merged)
+    col1,col2=st.columns([4,3])
+    with col1:
+        general.afficherTimeline(merged)
+    with col2:
+        general.afficherLocalisation(df_crisis)
     sentiment.repartitionSentiment(df_crisis)
     df_event = data["tweets_par_event"]
     eventids = sorted(df_event['crise_id'].astype(str).unique())
     df_selected = df_event[df_event['crise_id'].astype(str) == selected_label]
-    gravite.afficher_gravite_event_plotly(df_selected,selected_label)
-    gravite.afficher_tweets_gravite(df_selected)
+    expanderGravite = st.expander("Gravité",expanded=True)
+    with expanderGravite:
+        gravite.afficher_gravite_event_plotly(df_selected,selected_label)
+        gravite.afficher_tweets_gravite(df_selected)
     
-    aide.getInfosAide(merged)
-    aide.getRepartitionTypeDemande(merged)
-   
+    expanderHelp=st.expander("Demande d'aide",expanded=True)
+    with expanderHelp:        
+        aide.getInfosAide(merged)
+        aide.getRepartitionTypeDemande(merged)
+    
 
 def recherchePersonalisee(dataframes):
 
