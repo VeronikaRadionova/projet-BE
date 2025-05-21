@@ -96,10 +96,14 @@ def suiviCrise(data):
         general.afficherTimeline(merged)
     with col2:
         general.afficherLocalisation(df_crisis)
+    
     sentiment.repartitionSentiment(df_crisis)
     df_event = data["tweets_par_event"]
     eventids = sorted(df_event['crise_id'].astype(str).unique())
     df_selected = df_event[df_event['crise_id'].astype(str) == selected_label]
+    expanderWordcloud= st.expander("Wordcloud mot revenant le plus")
+    with expanderWordcloud:
+        gravite.afficher_wordcloud_gravite(df_selected)
     expanderGravite = st.expander("Gravité",expanded=True)
     with expanderGravite:
         gravite.afficher_gravite_event_plotly(df_selected,selected_label)
@@ -109,6 +113,8 @@ def suiviCrise(data):
     with expanderHelp:        
         aide.getInfosAide(merged)
         aide.getRepartitionTypeDemande(merged)
+    
+    
     
 
 def recherchePersonalisee(dataframes):
