@@ -137,7 +137,6 @@ def afficher_wordcloud_gravite(df, gravites_filtrees=["High", "Critical"]):
             max_words=100
         ).generate(texte_complet)
 
-        st.subheader("🧠 Nuage de mots pour les tweets à gravité élevée")
         fig, ax = plt.subplots(figsize=(10, 5))
         ax.imshow(wordcloud, interpolation='bilinear')
         ax.axis('off')

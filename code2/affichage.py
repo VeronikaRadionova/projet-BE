@@ -81,26 +81,28 @@ def suiviCrise(data):
     st.title("🔎 Analyse et suivi d'une crise : Volume & Sentiments")
 
     selected_label=st.selectbox("Crises",variables.getCrises(data))
-    st.markdown(f"- **Crise sélectionnée** : {selected_label}")
     df= data["Tweet_sentiment_localisation"]
     df["created_at"] = pd.to_datetime(df["created_at"], errors="coerce")
     df_crisis= df[(df["topic"]==variables.getCrisesTrecis(data)[selected_label])]
     merged = variables.getMergedDemandeDaide(data)
     merged = merged[merged['event_id'] == selected_label]
-    st.markdown(f"- **Nombre de tweets** : {len(df_crisis)}")
-    dernier_tweet = df_crisis["created_at"].max()
-    if pd.notnull(dernier_tweet):
-        st.markdown(f"- **Dernier tweet** : {dernier_tweet.strftime('%Y-%m-%d %H:%M')}")
-    col1,col2=st.columns([4,3])
-    with col1:
-        general.afficherTimeline(merged)
-    with col2:
-        general.afficherLocalisation(df_crisis)
-    
-    sentiment.repartitionSentiment(df_crisis)
-    df_event = data["tweets_par_event"]
-    eventids = sorted(df_event['crise_id'].astype(str).unique())
-    df_selected = df_event[df_event['crise_id'].astype(str) == selected_label]
+    expanderGeneral=st.expander("General",expanded=True)
+    with expanderGeneral:
+        st.markdown(f"- **Nombre de tweets** : {len(df_crisis)}")
+        dernier_tweet = df_crisis["created_at"].max()
+        if pd.notnull(dernier_tweet):
+            st.markdown(f"- **Dernier tweet** : {dernier_tweet.strftime('%Y-%m-%d %H:%M')}")
+        col1,col2=st.columns([4,3])
+        with col1:
+            general.afficherTimeline(merged)
+        with col2:
+            general.afficherLocalisation(df_crisis)
+    expanderSentiment= st.expander("Sentiment",expanded=True)
+    with expanderSentiment:
+        sentiment.repartitionSentiment(df_crisis)
+        df_event = data["tweets_par_event"]
+        eventids = sorted(df_event['crise_id'].astype(str).unique())
+        df_selected = df_event[df_event['crise_id'].astype(str) == selected_label]
     expanderWordcloud= st.expander("Wordcloud mot revenant le plus")
     with expanderWordcloud:
         gravite.afficher_wordcloud_gravite(df_selected)
@@ -113,7 +115,9 @@ def suiviCrise(data):
     with expanderHelp:        
         aide.getInfosAide(merged)
         aide.getRepartitionTypeDemande(merged)
-    
+    #expanderInfluenceur= st.expander("Influenceurs",expanded=True)
+    #with expanderInfluenceur:
+    #    general.afficherInfluenceur(data,selected_label)
     
     
 
