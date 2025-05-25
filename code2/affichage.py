@@ -120,8 +120,12 @@ def suiviCrise(data):
     expanderInfluenceur= st.expander("Influenceurs",expanded=True)
     with expanderInfluenceur:
         general.afficherInfluenceur(data,selected_label)
-    categorie.afficher_repartition_categories_crise(df_crisis, variables.getCrisesTrecis(data)[selected_label], readable_topics=variables.getTrecisCrises(data))
-    general.afficherTopHashtagParCriseFromList(df_crisis, variables.getCrisesTrecis(data)[selected_label],readable_topics=variables.getTrecisCrises(data))
+    expanderCategorie= st.expander("Catégories des posts",expanded=True)
+    with expanderCategorie: 
+        categorie.afficher_repartition_categories_crise(df_crisis, variables.getCrisesTrecis(data)[selected_label], readable_topics=variables.getTrecisCrises(data))
+    expanderHashtag=st.expander("Hashtags",expanded=True)
+    with expanderHashtag:
+        general.afficherTopHashtagParCriseFromList(df_crisis, variables.getCrisesTrecis(data)[selected_label],readable_topics=variables.getTrecisCrises(data))
 
     
 
