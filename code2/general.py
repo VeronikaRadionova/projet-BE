@@ -75,7 +75,7 @@ def afficher_statistiques_temps(df):
     else:
         st.warning("Les colonnes 'created_at' ou 'topic' sont manquantes ou mal formatées.")
 
-def afficherHashtag(dataframes):
+def afficherHashtag(dataframes, readable_topics=None):
     # Vérifie la présence du fichier nécessaire
     if "Hashtag_clean" not in dataframes:
         st.error("Le fichier 'Hashtag_clean.csv' est manquant dans le dossier CSV.")
@@ -84,37 +84,58 @@ def afficherHashtag(dataframes):
     df = dataframes["Hashtag_clean"]
 
     # Vérification des colonnes nécessaires
-    required_columns = {"hashtag_id", "occurences"}
+    required_columns = {"hashtag_id", "occurences", "topic"}
     if not required_columns.issubset(df.columns):
-        st.error("Colonnes attendues manquantes dans le DataFrame.")
+        st.error("Colonnes attendues manquantes dans le DataFrame (besoin de 'hashtag_id', 'occurences', 'topic').")
         return
 
     # Nettoyage des hashtags
     df['hashtag_id'] = df['hashtag_id'].astype(str).str.lower().str.strip()
+    df['topic'] = df['topic'].astype(str).str.strip()
 
-    # Agrégation des occurrences
-    top_hashtag_ids = df.groupby('hashtag_id')['occurences'].sum().reset_index()
-    top_hashtag_ids = top_hashtag_ids.sort_values(by='occurences', ascending=False)
+    # Grouper par hashtag et crise
+    hashtag_crise_counts = df.groupby(['hashtag_id', 'topic'])["occurences"].sum().reset_index()
+    # Remplacer les topics par leur nom lisible si fourni
+    if readable_topics:
+        hashtag_crise_counts['topic'] = hashtag_crise_counts['topic'].map(readable_topics).fillna(hashtag_crise_counts['topic'])
+
+    # Pour chaque hashtag, lister les crises associées (pour affichage dans le tableau)
+    hashtag_to_crises = hashtag_crise_counts.groupby('hashtag_id')['topic'].apply(lambda x: ', '.join(sorted(set(x)))).reset_index()
+    hashtag_to_crises.columns = ['hashtag_id', 'crises']
+
+    # Total occurrences par hashtag (toutes crises confondues)
+    total_counts = hashtag_crise_counts.groupby('hashtag_id')["occurences"].sum().reset_index()
+    total_counts = total_counts.sort_values(by='occurences', ascending=False)
+
+    # Fusion pour affichage tableau
+    table = total_counts.merge(hashtag_to_crises, on='hashtag_id')
 
     # Slider interactif
-    top_n = st.slider("Nombre de hashtags à afficher", min_value=5, max_value=30, value=10)
+    max_n = min(30, len(table))
+    if max_n < 5:
+        st.info("Moins de 5 hashtags trouvés dans les données.")
+        top_n = max_n
+    else:
+        top_n = st.slider("Nombre de hashtags à afficher", min_value=5, max_value=max_n, value=min(10, max_n), key="slider_hashtag_crise")
 
-    # Affichage du graphique
+    # Affichage du graphique barres groupées par crise
+    top_hashtags = table.head(top_n)['hashtag_id'].tolist()
+    df_plot = hashtag_crise_counts[hashtag_crise_counts['hashtag_id'].isin(top_hashtags)]
     fig = px.bar(
-        top_hashtag_ids.head(top_n),
+        df_plot,
         x='occurences',
         y='hashtag_id',
+        color='topic',
         orientation='h',
-        title=f"Top {top_n} des hashtags les plus utilisés",
-        labels={'occurences': 'Nombre d’occurrences', 'hashtag_id': 'Hashtag'}
+        title=f"Top {top_n} hashtags par crise",
+        labels={'occurences': 'Nombre d’occurrences', 'hashtag_id': 'Hashtag', 'topic': 'Crise'}
     )
-
-    fig.update_layout(
-        yaxis={'categoryorder': 'total ascending'},
-        title_x=0.5
-    )
-
+    fig.update_layout(yaxis={'categoryorder': 'total ascending'}, title_x=0.5)
     st.plotly_chart(fig, use_container_width=True)
+
+    # Affichage du tableau hashtags + crises associées
+    st.markdown("**Tableau des hashtags et crises associées :**")
+    st.dataframe(table.head(top_n), use_container_width=True)
 
 def afficher_repartition_par_topic(df):
     # --- 🥧 Répartition des tweets par topic ---
@@ -302,3 +323,134 @@ def afficherLocalisation(df):
     )
 
     st.plotly_chart(fig, use_container_width=True)
+
+def afficherTopHashtagParCriseFromList(df, selected_topic, readable_topics=None):
+    """
+    Affiche le top des hashtags pour une crise sélectionnée à partir d'une colonne de listes de hashtags.
+    df : DataFrame contenant au moins les colonnes 'topic' et 'hashtags' (liste ou str de liste)
+    selected_topic : nom ou identifiant de la crise à filtrer
+    readable_topics : dict optionnel pour afficher le nom lisible de la crise
+    """
+    # Déterminer le nom lisible de la crise
+    nom_crise = readable_topics[selected_topic] if readable_topics and selected_topic in readable_topics else selected_topic
+    st.subheader(f"🏷️ Top hashtags pour la crise : {nom_crise}")
+
+    # Filtrer sur la crise sélectionnée
+    df_crise = df[df["topic"] == selected_topic].copy()
+    if df_crise.empty:
+        st.info(f"Aucun tweet trouvé pour la crise : {nom_crise}")
+        return
+
+    # S'assurer que 'hashtags' est une liste
+    df_crise['hashtags'] = df_crise['hashtags'].apply(
+        lambda x: eval(x) if isinstance(x, str) and x not in ["", "nan", "None"] else x
+    )
+    df_exploded = df_crise.explode('hashtags')
+
+    # Nettoyage
+    df_exploded = df_exploded.dropna(subset=['hashtags'])
+    df_exploded['hashtags'] = df_exploded['hashtags'].astype(str).str.lower().str.strip()
+    df_exploded = df_exploded[df_exploded['hashtags'] != ""]
+
+    # Comptage des hashtags
+    hashtag_counts = df_exploded['hashtags'].value_counts().reset_index()
+    hashtag_counts.columns = ['hashtag', 'occurences']
+
+    if hashtag_counts.empty:
+        st.info(f"Aucun hashtag trouvé pour la crise : {nom_crise}")
+        return
+
+    # Adapter la borne max du slider au nombre de hashtags disponibles
+    max_n = min(30, len(hashtag_counts))
+    if max_n < 5:
+        st.info(f"Moins de 5 hashtags trouvés pour la crise : {nom_crise}")
+        top_n = max_n
+    else:
+        top_n = st.slider(f"Nombre de hashtags à afficher pour {nom_crise}", min_value=5, max_value=max_n, value=min(10, max_n), key=f"slider_list_{selected_topic}")
+
+    # Affichage du graphique
+    fig = px.bar(
+        hashtag_counts.head(top_n),
+        x='occurences',
+        y='hashtag',
+        orientation='h',
+        title=f"Top {top_n} hashtags pour {nom_crise}",
+        labels={'occurences': 'Nombre d’occurrences', 'hashtag': 'Hashtag'}
+    )
+    fig.update_layout(yaxis={'categoryorder': 'total ascending'}, title_x=0.5)
+    st.plotly_chart(fig, use_container_width=True)
+
+def afficherHashtag(df, readable_topics=None):
+    """
+    Affiche le top des hashtags de toutes les crises, avec la/les crises associées à chaque hashtag.
+    df : DataFrame contenant au moins les colonnes 'topic' et 'hashtags' (liste ou str de liste)
+    readable_topics : dict optionnel pour afficher le nom lisible de la crise
+    """
+    df = df.copy()
+    # S'assurer que 'hashtags' est une liste
+    def to_list(x):
+        if isinstance(x, list):
+            return x
+        if isinstance(x, str) and x not in ["", "nan", "None"]:
+            try:
+                val = eval(x)
+                if isinstance(val, list):
+                    return val
+                return [val]
+            except:
+                return [x]
+        return []
+    df['hashtags'] = df['hashtags'].apply(to_list)
+    df_exploded = df.explode('hashtags')
+
+    # Nettoyage
+    df_exploded = df_exploded.dropna(subset=['hashtags', 'topic'])
+    df_exploded['hashtags'] = df_exploded['hashtags'].astype(str).str.lower().str.strip()
+    df_exploded['topic'] = df_exploded['topic'].astype(str).str.strip()
+    df_exploded = df_exploded[df_exploded['hashtags'] != ""]
+
+    # Remplacer les topics par leur nom lisible si fourni
+    if readable_topics:
+        df_exploded['topic'] = df_exploded['topic'].map(readable_topics).fillna(df_exploded['topic'])
+
+    # Grouper par hashtag et crise
+    hashtag_crise_counts = df_exploded.groupby(['hashtags', 'topic']).size().reset_index(name='occurences')
+
+    # Pour chaque hashtag, lister les crises associées (pour affichage dans le tableau)
+    hashtag_to_crises = hashtag_crise_counts.groupby('hashtags')['topic'].apply(lambda x: ', '.join(sorted(set(x)))).reset_index()
+    hashtag_to_crises.columns = ['hashtag', 'crises']
+
+    # Total occurrences par hashtag (toutes crises confondues)
+    total_counts = hashtag_crise_counts.groupby('hashtags')["occurences"].sum().reset_index()
+    total_counts = total_counts.sort_values(by='occurences', ascending=False)
+    total_counts = total_counts.rename(columns={'hashtags': 'hashtag'})
+
+    # Fusion pour affichage tableau
+    table = total_counts.merge(hashtag_to_crises, on='hashtag')
+
+    # Slider interactif
+    max_n = min(30, len(table))
+    if max_n < 5:
+        st.info("Moins de 5 hashtags trouvés dans les données.")
+        top_n = max_n
+    else:
+        top_n = st.slider("Nombre de hashtags à afficher", min_value=5, max_value=max_n, value=min(10, max_n), key="slider_hashtag_crise_all")
+
+    # Affichage du graphique barres groupées par crise
+    top_hashtags = table.head(top_n)['hashtag'].tolist()
+    df_plot = hashtag_crise_counts[hashtag_crise_counts['hashtags'].isin(top_hashtags)]
+    fig = px.bar(
+        df_plot,
+        x='occurences',
+        y='hashtags',
+        color='topic',
+        orientation='h',
+        title=f"Top {top_n} hashtags (toutes crises)",
+        labels={'occurences': 'Nombre d’occurrences', 'hashtags': 'Hashtag', 'topic': 'Crise'}
+    )
+    fig.update_layout(yaxis={'categoryorder': 'total ascending'}, title_x=0.5)
+    st.plotly_chart(fig, use_container_width=True)
+
+    # Affichage du tableau hashtags + crises associées
+    st.markdown("**Tableau des hashtags et crises associées :**")
+    st.dataframe(table.head(top_n), use_container_width=True)

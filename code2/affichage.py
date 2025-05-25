@@ -73,7 +73,7 @@ def vueEnsemble(dataframes):
     with col3:
         general.create_heatmap(df)
     with col4: 
-        general.afficherHashtag(dataframes)
+        general.afficherHashtag(df, readable_topics=variables.getTrecisCrises(dataframes))
     general.afficher_repartition_par_topic(df)
 
 
@@ -121,6 +121,8 @@ def suiviCrise(data):
     with expanderInfluenceur:
         general.afficherInfluenceur(data,selected_label)
     categorie.afficher_repartition_categories_crise(df_crisis, variables.getCrisesTrecis(data)[selected_label], readable_topics=variables.getTrecisCrises(data))
+    general.afficherTopHashtagParCriseFromList(df_crisis, variables.getCrisesTrecis(data)[selected_label],readable_topics=variables.getTrecisCrises(data))
+
     
 
 def recherchePersonalisee(dataframes):
