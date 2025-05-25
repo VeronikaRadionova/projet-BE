@@ -12,7 +12,8 @@ required_packages = {
     "folium": "folium",
     "streamlit_folium": "streamlit-folium",
     "wordcloud": "wordcloud",
-    "matplotlib": "matplotlib"
+    "matplotlib": "matplotlib",
+    "networkx": "networkx"
 }
 
 # --- 2. Vérification et installation si manquant ---

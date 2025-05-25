@@ -10,6 +10,7 @@ import gravite
 import aide
 import variables
 import interactions
+import categorie
 
 def accueil():
     st.title("Bienvenue sur le Tableau de bord des Tweets 📈")
@@ -119,7 +120,7 @@ def suiviCrise(data):
     expanderInfluenceur= st.expander("Influenceurs",expanded=True)
     with expanderInfluenceur:
         general.afficherInfluenceur(data,selected_label)
-    
+    categorie.afficher_repartition_categories_crise(df_crisis, variables.getCrisesTrecis(data)[selected_label], readable_topics=variables.getTrecisCrises(data))
     
 
 def recherchePersonalisee(dataframes):
@@ -284,31 +285,7 @@ def comparateurCrises(dataframes):
     )
     fig_sentiment.update_layout(xaxis_tickangle=-45, title_x=0.5)
     st.plotly_chart(fig_sentiment, use_container_width=True)
-     # --- 🥧 Répartition des catégories de posts ---
-    st.subheader("📚 Répartition des catégories de posts")
-
-    # Assurer que 'post_category' est bien une liste et exploser
-    df_filtered['post_category'] = df_filtered['post_category'].apply(lambda x: eval(x) if isinstance(x, str) else x)
-    df_exploded = df_filtered.explode('post_category')
-
-    # Supprimer les valeurs nulles après explosion
-    df_exploded = df_exploded.dropna(subset=['post_category'])
-
-    category_counts = df_exploded.groupby(["topic", "post_category"]).size().reset_index(name="count")
-    category_counts["topic"] = category_counts["topic"].map(readable_topics)
-
-    fig_category = px.bar(
-        category_counts,
-        x="post_category",
-        y="count",
-        color="topic",
-        barmode="group",
-        text_auto=True,
-        title="Comparaison des types de posts entre crises",
-        labels={"post_category": "Catégorie de Post", "count": "Nombre de Tweets"}
-    )
-    fig_category.update_layout(xaxis_tickangle=-45, title_x=0.5)
-    st.plotly_chart(fig_category, use_container_width=True)
+    categorie.afficher_comparaison_categories_crises(df_filtered, readable_topics=readable_topics)
 
 def interaction_page(dataframes):
     #TODO 
