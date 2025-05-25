@@ -9,7 +9,7 @@ import numpy as np
 import gravite
 import aide
 import variables
-
+import interactions
 
 def accueil():
     st.title("Bienvenue sur le Tableau de bord des Tweets 📈")
@@ -309,6 +309,28 @@ def comparateurCrises(dataframes):
     )
     fig_category.update_layout(xaxis_tickangle=-45, title_x=0.5)
     st.plotly_chart(fig_category, use_container_width=True)
+
+def interaction_page(dataframes):
+    #TODO 
+    data=interactions.load_data_interaction(dataframes)
+    crises = list(data.keys())
+    selected_crisis = st.selectbox("Sélectionnez une crise", crises)
+    sample_size = st.slider("Taille de l'échantillon de tweets à afficher", min_value=50, max_value=1000, value=200, step=50)
+    event_df = data[selected_crisis]
+    st.subheader(f"Graphe d'interactions pour la crise : {selected_crisis.capitalize()}")
+    G = interactions.create_graph(event_df, sample_size)
+    # Affichage du graphe ou message si vide
+    if G.number_of_nodes() == 0:
+        st.warning("Aucun graphe à afficher pour cette crise.")
+    else:
+        interactions.draw_graph(G)
+
+        # Affichage des utilisateurs les plus actifs
+        st.subheader("Utilisateurs les plus actifs dans ce graphe")
+        top_users_df = interactions.get_most_active_users(G, pd.read_csv("../CSV/User_clean.csv"))
+        st.dataframe(top_users_df)
+
+
 
 def carteGlobale(dataframes):
     labels = variables.getTrecisCrises(dataframes)

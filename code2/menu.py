@@ -109,6 +109,7 @@ page = st.sidebar.radio("Navigation", [
         "Suivi de crise",
         "Carte globale des tweets",
         "Comparateur de crises",
+        "Graphe d'interactions",
         "Recherche personnalisée"
     ])
 
@@ -127,3 +128,5 @@ elif page == "Comparateur de crises":
     affichage.comparateurCrises(dataframes)
 elif page == "Carte globale des tweets":
     affichage.carteGlobale(dataframes)
+elif page== "Graphe d'interactions":
+    affichage.interaction_page(dataframes)
