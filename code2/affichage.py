@@ -115,9 +115,10 @@ def suiviCrise(data):
     with expanderHelp:        
         aide.getInfosAide(merged)
         aide.getRepartitionTypeDemande(merged)
-    #expanderInfluenceur= st.expander("Influenceurs",expanded=True)
-    #with expanderInfluenceur:
-    #    general.afficherInfluenceur(data,selected_label)
+        
+    expanderInfluenceur= st.expander("Influenceurs",expanded=True)
+    with expanderInfluenceur:
+        general.afficherInfluenceur(data,selected_label)
     
     
 
